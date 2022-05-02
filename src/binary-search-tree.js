@@ -8,15 +8,19 @@ const { Node } = require('../extensions/list-tree.js');
 */
 class BinarySearchTree {
   constructor(){
-   this.root = null;
+   this.rootNode = null;
   }
 
   root() {
-    
+    if(!this.rootNode){
+      return null
+    } else{
+      return this.rootNode
+    }
   }
 
   add(data) {
-    this.root = addWithin(this.root, data);
+    this.rootNode = addWithin(this.rootNode, data);
     
     function addWithin(node, data) {
       if (!node) {
@@ -35,7 +39,7 @@ class BinarySearchTree {
   }
 
   has(data) {
-    return searchWithin(this.root, data);
+    return searchWithin(this.rootNode, data);
     function searchWithin(node, data) {
       if (!node) {
         return false;
@@ -50,29 +54,75 @@ class BinarySearchTree {
   }
 
   find(data) {
-    return findWithin(this.root, data);
+    return findWithin(this.rootNode, data);
     function findWithin(node, data) {
       if (!node) {
         return null;
+      }
+      if (node.data === data) {
+        return node
+      }
+      return data < node.data ?
+      findWithin(node.left, data) :
+      findWithin(node.right, data)
+    }
+  }
+
+  remove(data) {
+    this.rootNode = removeNode(this.rootNode, data);
+    function removeNode(node, data) {
+      if (!node) {
+        return null;
+      }
+      if(data < node.data) {
+        node.left = removeNode(node.left, data);
+        return node;
+      } else if(data > node.data) {
+        node.right = removeNode(node.right, data);
+        return node;
       } else {
-        return node.data
+        if(!node.left && !node.right){
+          return null;
+        }
+        if(!node.left){
+          node = node.right;
+          return node;
+        }
+        if(!node.right){
+          node = node.left;
+          return node;
+        }
+        let maxFromLeft = node.left;
+        while(maxFromLeft.right){
+          maxFromLeft = maxFromLeft.right;
+        }
+        node.data = maxFromLeft.data;
+        node.left = removeNode(node.left, maxFromLeft.data);
+        return node;
       }
     }
   }
 
-  remove(/* data */) {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
-  }
-
   min() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if(!this.rootNode){
+      return null;
+    }
+    let current = this.rootNode;
+    while(current.left){
+      current = current.left;
+    }
+    return current.data
   }
 
   max() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+    if(!this.rootNode){
+      return null;
+    }
+    let current = this.rootNode;
+    while(current.right){
+      current = current.right;
+    }
+    return current.data
   }
 }
 
